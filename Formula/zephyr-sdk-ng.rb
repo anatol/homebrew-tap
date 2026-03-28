@@ -15,16 +15,17 @@ class ZephyrSdkNg < Formula
     libexec.install Dir["*"]
 
     cd libexec do
-      # Run Zephyr SDK setup script (installs toolchains + host tools)
-      # -- -y = non-interactive
-      system "./setup.sh", "-t", "all"
+      # Install GNU toolchains, register the CMake package, and create
+      # compatibility symlinks for the pre-4.3 SDK layout.
+      system "./setup.sh", "-t", "all", "-c", "-o"
     end
 
     # Export environment helper
     (bin/"zephyr-sdk-env").write <<~EOS
       #!/bin/bash
       export ZEPHYR_SDK_INSTALL_DIR="#{libexec}"
-      export PATH="#{libexec}/arm-zephyr-eabi/bin:#{libexec}/xtensa-espressif_esp32_zephyr-elf/bin:$PATH"
+      export CMAKE_PREFIX_PATH="#{libexec}${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+      export PATH="#{libexec}/gnu/arm-zephyr-eabi/bin:#{libexec}/gnu/xtensa-espressif_esp32_zephyr-elf/bin:$PATH"
       echo "Zephyr SDK environment set."
     EOS
 
@@ -36,8 +37,11 @@ class ZephyrSdkNg < Formula
       Zephyr SDK installed to:
         #{libexec}
 
-      You need to export:
+      The formula registers the Zephyr SDK CMake package automatically.
+
+      If you build in an isolated shell and CMake cannot find it, export:
         export ZEPHYR_SDK_INSTALL_DIR=#{libexec}
+        export CMAKE_PREFIX_PATH=#{libexec}:$CMAKE_PREFIX_PATH
 
       Or run:
         zephyr-sdk-env
@@ -48,6 +52,7 @@ class ZephyrSdkNg < Formula
   end
 
   test do
-    assert_predicate libexec, :exist?
+    assert_predicate libexec/"cmake/Zephyr-sdkConfig.cmake", :exist?
+    assert_predicate bin/"zephyr-sdk-env", :exist?
   end
 end
