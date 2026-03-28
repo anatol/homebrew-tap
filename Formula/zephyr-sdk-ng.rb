@@ -2,10 +2,10 @@ class ZephyrSdkNg < Formula
   desc "Zephyr SDK (toolchain, host tools, and debug utilities)"
   homepage "https://github.com/zephyrproject-rtos/sdk-ng"
   license "Apache-2.0"
-  version "1.0.0"
+  version "1.0.1"
 
   url "https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v#{version}/zephyr-sdk-#{version}_macos-aarch64_llvm.tar.xz"
-  sha256 "73dd6a432119eb5f1478c6a950e2b4171ee76059bcb94510d9144e32a98f8492"
+  sha256 "b4def16627864925d35971d611ead3efe880890f8a8d1f5732444a977d58ff9a"
 
   depends_on "cmake"
   depends_on "ninja"
